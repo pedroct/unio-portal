@@ -1,0 +1,85 @@
+# Handoff Doc: UNIO - Painel Web B2B (React SPA)
+
+**Projeto:** UNIO Performance OS  
+**Módulo:** Dashboard Profissional (Web B2B)  
+**Público-Alvo:** Profissionais de Saúde (Personal Trainers, Nutricionistas, Médicos)  
+**Stack Definida:** React (Vite) + Shadcn/ui + Tailwind CSS
+
+---
+
+## 1. Visão do Produto
+
+O UNIO nasce como o "Performance OS", uma plataforma unificada que elimina a fragmentação da saúde digital ao centralizar _Nutrição_, _Treino_, _Biometria_ e _Hidratação_ em um único ecossistema.
+
+Esta aplicação frontend será o **Centro de Controle do Profissional**. É onde os médicos, nutricionistas e personais farão o acompanhamento dos seus pacientes, criando prescrições e, acima de tudo, cruzando os dados de forma preditiva (ex: queda de ingestão de proteína vs. queda de massa muscular).
+
+**Design System:**
+
+- Requisito máximo de estética **Premium, Clean e de Alta Interatividade**.
+- Deve-se usar Tailwind CSS aliado aos componentes modulares do **Shadcn/ui** para compor uma interface responsiva, com dark mode opcional dinâmico, animações sutis de estado, esqueleto de loadings (`Skeletons`) ao invés de spinners, e gráficos elegantes (sugestão: Recharts).
+
+---
+
+## 2. Arquitetura de Comunicação (API)
+
+O frontend não terá regras de negócio complexas. Toda a inteligência reside no Backend (Django Ninja API).
+
+- **Autenticação:** O acesso é bloqueado e ocorre via **JWT** (obtenção de Access/Refresh tokens na API).
+  - O fluxo de login dos profissionais utilizará o **Número do Registro Profissional** + **Estado (UF)** como identificador (login).
+  - A **senha** padrão de acesso será o **CPF** do profissional.
+- **Comunicação:** Chamadas REST puras utilizando Fetch API ou axios/TanStack Query (React Query) para gerenciar cache e estados de _loading/error_ de forma elegante.
+
+---
+
+## 3. Escopo do MVP (Telas e Funcionalidades Principais)
+
+### 3.1. Autenticação e Layout Base
+
+- **Tela de Login:** Autenticação customizada utilizando **Registro Profissional + UF** no login e o **CPF** no campo senha.
+- **Sidebar de Navegação / Layout Shell:** Menu lateral consolidando acesso rápido aos Módulos (Pacientes, Dashboard Global, Configurações).
+
+### 3.2. Módulo Base (Pacientes)
+
+- **Painel de Pacientes:** Tabela listando os pacientes vinculados ao profissional (com status rápido de aderência aos treinos/dieta na última semana).
+
+### 3.3. Dashboard do Paciente (`/pacientes/[id]/dashboard`)
+
+Esta é a tela de "Single Source of Truth". Nela, o profissional deve acessar 4 áreas (podendo ser em formato de Abas / Tabs do Shadcn):
+
+1. **Visão Geral (Insights):**  
+   Painel de inteligência que cruza as informações. Gráficos correlacionando dados de _Treino vs. Biometria vs. Nutrição_.
+
+2. **Aba de Nutrição:**
+   - Resumo da Meta Calórica e divisão de Macros do paciente.
+   - Histórico do Diário Alimentar e aderência (`/api/profissional/dashboard/pacientes/{id}/nutricao`).
+
+3. **Aba de Biometria (Evolução):**
+   - Gráficos renderizando o histórico de capturas (Gordura, Massa Muscular, Água).
+   - Indicadores de tendência (`/api/profissional/dashboard/pacientes/{id}/biometria`).
+
+4. **Aba de Treinamento:**
+   - (A ser finalizado no backend) Tela para visualizar sessões executadas, volume de carga (% levantada) e Percepção Subjetiva de Esforço (PSE / RPE).
+
+### 3.4. Gestão e Configuração (Perfil do Paciente)
+
+- Tela para Ajustes das Metas. Exemplo vital: Ajuste manual da Meta de Hidratação do Paciente que sobrescreve o cálculo de "peso".
+
+---
+
+## 4. Próximos Passos (Setup do Projeto)
+
+As instruções a seguir devem direcionar o início do trabalho em ambiente como Replit ou local:
+
+1. Executar `npm create vite@latest unio-web -- --template react-ts`
+2. Instalar e configurar Tailwind CSS.
+3. Inicializar o `shadcn-ui` (`npx shadcn-ui@latest init`) e configurar as fontes primárias (Recomenda-se Inter ou Roboto).
+4. Configurar camada de Roteamento (React Router DOM).
+5. Instalar stack de _State Management_ e API (Axios + TanStack Query recomendado).
+
+---
+
+## 5. Diretrizes de Qualidade do Código B2B
+
+- Usar tipagem forte (TypeScript) em componentes de tabela, formulários e props.
+- O Dashboard do Profissional NÃO FAZ cálculos complexos. Se precisa calcular uma média de queima calórica nos últimos 30 dias com base num vetor de treinos, o backend Django é responsável por enviar essa consolidação pronta. O frontend é _Presentation Only_.
+- Sempre priorize estado de vazio (Empty States). O que mostrar quando o paciente ainda não tiver subido numa balança? Use SVGs bonitas explicando os próximos passos.
