@@ -25,6 +25,24 @@ import { useAuth } from "@/lib/auth";
 import { loginSchema, BRAZILIAN_STATES, type LoginCredentials } from "@shared/schema";
 import unioLogo from "@assets/Unio_Logo_1771972757927.png";
 
+function formatRegistration(value: string): string {
+  const raw = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  const letters = raw.replace(/[^A-Z]/g, "");
+  const numbers = raw.replace(/[^0-9]/g, "");
+  if (letters && numbers) {
+    return `${letters}-${numbers}`;
+  }
+  return raw;
+}
+
+function formatCPF(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+  if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+}
+
 export default function LoginPage() {
   const [, navigate] = useLocation();
   const { login } = useAuth();
@@ -44,7 +62,8 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginCredentials) => {
     setIsSubmitting(true);
     try {
-      await login(data.registrationNumber, data.uf, data.password);
+      const rawPassword = data.password.replace(/\D/g, "");
+      await login(data.registrationNumber, data.uf, rawPassword);
       navigate("/pacientes");
     } catch (error: any) {
       toast({
@@ -139,8 +158,9 @@ export default function LoginPage() {
                       <FormLabel>Registro Profissional</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="CRM / CRN / CREF"
+                          placeholder="CRM-12345"
                           {...field}
+                          onChange={(e) => field.onChange(formatRegistration(e.target.value))}
                           data-testid="input-registration"
                         />
                       </FormControl>
@@ -185,8 +205,10 @@ export default function LoginPage() {
                       <div className="relative">
                         <Input
                           type={showPassword ? "text" : "password"}
-                          placeholder="Digite seu CPF"
+                          placeholder="000.000.000-00"
                           {...field}
+                          onChange={(e) => field.onChange(formatCPF(e.target.value))}
+                          maxLength={14}
                           data-testid="input-password"
                         />
                         <button
