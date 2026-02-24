@@ -1,0 +1,99 @@
+import { useLocation, Link } from "wouter";
+import { Users, LayoutDashboard, Settings, LogOut, Activity } from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarSeparator,
+} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/auth";
+
+const navItems = [
+  { title: "Pacientes", url: "/pacientes", icon: Users },
+  { title: "Dashboard Global", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Configurações", url: "/configuracoes", icon: Settings },
+];
+
+export function AppSidebar() {
+  const [location] = useLocation();
+  const { professional, logout } = useAuth();
+
+  const initials = professional?.name
+    ? professional.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()
+    : "UN";
+
+  return (
+    <Sidebar>
+      <SidebarHeader className="p-4">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Activity className="h-6 w-6 text-[#3B5F4A]" />
+            <div>
+              <h1 className="font-serif text-xl font-bold tracking-tight" data-testid="text-brand-name">UNIO</h1>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">Performance OS</p>
+            </div>
+          </div>
+        </div>
+      </SidebarHeader>
+
+      <SidebarSeparator />
+
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => {
+                const isActive = location.startsWith(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild data-active={isActive} data-testid={`nav-${item.title.toLowerCase().replace(/\s/g, "-")}`}>
+                      <Link href={item.url}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="p-4">
+        <SidebarSeparator className="mb-4" />
+        <div className="flex items-center gap-3">
+          <Avatar className="h-9 w-9">
+            <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium truncate" data-testid="text-professional-name">
+              {professional?.name || "Profissional"}
+            </p>
+            <p className="text-xs text-muted-foreground truncate" data-testid="text-professional-specialty">
+              {professional?.specialty || "Especialidade"}
+            </p>
+          </div>
+          <SidebarMenuButton
+            onClick={logout}
+            className="h-9 w-9 p-0 flex items-center justify-center shrink-0"
+            data-testid="button-logout"
+          >
+            <LogOut className="h-4 w-4" />
+          </SidebarMenuButton>
+        </div>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
