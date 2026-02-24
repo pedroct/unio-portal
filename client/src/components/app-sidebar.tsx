@@ -16,7 +16,6 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/lib/auth";
 import unioLogo from "@assets/Unio_Logo_1771972757927.png";
-import unioIcon from "@assets/icone_1771972763993.png";
 
 const navItems = [
   { title: "Pacientes", url: "/pacientes", icon: Users },
@@ -35,12 +34,9 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
-          <img src={unioIcon} alt="UNIO" className="h-8 w-8 object-contain" />
-          <div>
-            <img src={unioLogo} alt="UNIO" className="h-5 object-contain" data-testid="text-brand-name" />
-            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium mt-0.5">Performance OS</p>
-          </div>
+        <div className="flex flex-col gap-1">
+          <img src={unioLogo} alt="UNIO" className="h-6 object-contain object-left" data-testid="text-brand-name" />
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">Performance OS</p>
         </div>
       </SidebarHeader>
 

@@ -24,7 +24,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 import { loginSchema, BRAZILIAN_STATES, type LoginCredentials } from "@shared/schema";
 import unioLogo from "@assets/Unio_Logo_1771972757927.png";
-import unioIcon from "@assets/icone_1771972763993.png";
 
 export default function LoginPage() {
   const [, navigate] = useLocation();
@@ -73,9 +72,8 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full">
-          <div className="flex items-center gap-4">
-            <img src={unioIcon} alt="" className="h-10 w-10 object-contain" />
-            <img src={unioLogo} alt="UNIO" className="h-7 object-contain brightness-0 invert" />
+          <div>
+            <img src={unioLogo} alt="UNIO" className="h-8 object-contain brightness-0 invert" />
           </div>
 
           <div className="max-w-md">
@@ -117,9 +115,8 @@ export default function LoginPage() {
 
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
         <div className="w-full max-w-md">
-          <div className="lg:hidden flex items-center gap-3 mb-10">
-            <img src={unioIcon} alt="" className="h-9 w-9 object-contain" />
-            <img src={unioLogo} alt="UNIO" className="h-6 object-contain" />
+          <div className="lg:hidden mb-10">
+            <img src={unioLogo} alt="UNIO" className="h-7 object-contain" />
           </div>
 
           <div className="mb-8">
